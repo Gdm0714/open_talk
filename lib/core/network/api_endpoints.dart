@@ -11,7 +11,8 @@ class ApiEndpoints {
   static const String me = '/users/me';
   static const String users = '/users';
   static String userById(String id) => '/users/$id';
-  static String searchUsers(String query) => '/users/search?q=$query';
+  static String searchUsers(String query) =>
+      '/users/search?q=${Uri.encodeQueryComponent(query)}';
 
   // Friends
   static const String friends = '/friends';

@@ -20,7 +20,7 @@ class FriendRepository {
 
   Future<void> sendRequest(String userId) async {
     await _dio.post(
-      ApiEndpoints.friends,
+      '${ApiEndpoints.friends}/request',
       data: {'friend_id': userId},
     );
   }

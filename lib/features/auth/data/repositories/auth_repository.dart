@@ -72,7 +72,7 @@ class AuthRepository {
 
     final response = await _dio.post(
       ApiEndpoints.refreshToken,
-      data: {'refresh_token': refreshToken},
+      data: {'token': refreshToken},
     );
 
     final data =

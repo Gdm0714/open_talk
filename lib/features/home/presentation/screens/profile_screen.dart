@@ -80,13 +80,13 @@ class ProfileScreen extends ConsumerWidget {
             context,
             icon: Icons.notifications_outlined,
             title: '알림',
-            onTap: () {},
+            onTap: () => _showComingSoon(context),
           ),
           _buildSettingsTile(
             context,
             icon: Icons.lock_outline,
             title: '개인정보 보호',
-            onTap: () {},
+            onTap: () => _showComingSoon(context),
           ),
           _buildSettingsTile(
             context,
@@ -98,7 +98,7 @@ class ProfileScreen extends ConsumerWidget {
             context,
             icon: Icons.palette_outlined,
             title: '테마',
-            onTap: () {},
+            onTap: () => _showComingSoon(context),
           ),
 
           const SizedBox(height: 16),
@@ -107,13 +107,13 @@ class ProfileScreen extends ConsumerWidget {
             context,
             icon: Icons.help_outline,
             title: '도움말',
-            onTap: () {},
+            onTap: () => _showComingSoon(context),
           ),
           _buildSettingsTile(
             context,
             icon: Icons.info_outline,
             title: '앱 정보',
-            onTap: () {},
+            onTap: () => _showAppInfo(context),
           ),
 
           const SizedBox(height: 24),
@@ -162,6 +162,24 @@ class ProfileScreen extends ConsumerWidget {
           const SizedBox(height: 32),
         ],
       ),
+    );
+  }
+
+  void _showComingSoon(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('준비 중인 기능입니다'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _showAppInfo(BuildContext context) {
+    showAboutDialog(
+      context: context,
+      applicationName: 'OpenTalk',
+      applicationVersion: '1.0.0',
+      applicationLegalese: 'Open-source privacy-focused messenger',
     );
   }
 

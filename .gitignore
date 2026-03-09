@@ -54,6 +54,7 @@ backend/bin/
 backend/coverage.out
 backend/coverage.html
 backend/*.db
+backend/open_talk
 
 # Generated files
 *.freezed.dart

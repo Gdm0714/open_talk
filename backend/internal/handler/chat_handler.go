@@ -139,6 +139,11 @@ func (h *ChatHandler) SendMessage(c *gin.Context) {
 		return
 	}
 
+	if len(req.Content) > 5000 {
+		response.BadRequest(c, "message too long (max 5000 characters)")
+		return
+	}
+
 	msgType := model.MessageTypeText
 	if req.MessageType != "" {
 		msgType = model.MessageType(req.MessageType)

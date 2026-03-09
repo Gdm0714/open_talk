@@ -56,13 +56,42 @@ class AuthInterceptor extends Interceptor {
 
 class ErrorInterceptor extends Interceptor {
   final Ref _ref;
+  bool _isRefreshing = false;
 
   ErrorInterceptor(this._ref);
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
-    if (err.response?.statusCode == 401) {
-      _ref.read(authStorageProvider).clearAll();
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
+    if (err.response?.statusCode == 401 && !_isRefreshing) {
+      _isRefreshing = true;
+      try {
+        final authStorage = _ref.read(authStorageProvider);
+        final refreshToken = await authStorage.getRefreshToken();
+        if (refreshToken != null) {
+          final dio = Dio(BaseOptions(
+            baseUrl: AppConstants.apiBaseUrl,
+            headers: {'Content-Type': 'application/json'},
+          ));
+          final response = await dio.post(
+            '/auth/refresh',
+            data: {'token': refreshToken},
+          );
+          final newToken =
+              (response.data as Map<String, dynamic>)['data']['token'] as String;
+          await authStorage.saveAccessToken(newToken);
+          _isRefreshing = false;
+
+          // Retry original request
+          final opts = err.requestOptions;
+          opts.headers['Authorization'] = 'Bearer $newToken';
+          final retryResponse = await dio.fetch(opts);
+          return handler.resolve(retryResponse);
+        }
+      } catch (_) {
+        // Refresh failed, clear auth
+        await _ref.read(authStorageProvider).clearAll();
+      }
+      _isRefreshing = false;
     }
     handler.next(err);
   }

@@ -5,14 +5,20 @@ import (
 )
 
 func CORSMiddleware() gin.HandlerFunc {
+	allowedOrigins := map[string]bool{
+		"http://localhost:3000":    true,
+		"http://localhost:8080":    true,
+		"http://localhost:8081":    true,
+		"http://127.0.0.1:3000":   true,
+		"http://127.0.0.1:8080":   true,
+	}
+
 	return func(c *gin.Context) {
 		origin := c.Request.Header.Get("Origin")
-		if origin != "" {
-			// Echo the request origin so credentials are allowed per CORS spec.
-			// "Access-Control-Allow-Origin: *" is invalid with credentials.
+		if origin != "" && allowedOrigins[origin] {
 			c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 			c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		} else {
+		} else if origin == "" {
 			c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		}
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
